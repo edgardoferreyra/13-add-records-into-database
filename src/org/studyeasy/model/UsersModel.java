@@ -2,6 +2,7 @@ package org.studyeasy.model;
 
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -42,5 +43,25 @@ public class UsersModel {
 					e.printStackTrace();
 				}
 				return listUsers;
+	}
+
+	public Boolean addUser(DataSource dataSource, User newUser) {
+		Connection connect = null;
+		PreparedStatement pstm = null;
+		try {
+			connect = dataSource.getConnection();
+			String username=newUser.getUsername();
+			String email=newUser.getEmail();
+			String query = "insert into users (username,email) values (?,?)";
+			pstm = connect.prepareStatement(query);
+			pstm.setString(1,username);
+			pstm.setString(2,email);
+			return pstm.execute();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;			
+		}
+		
 	}
 }

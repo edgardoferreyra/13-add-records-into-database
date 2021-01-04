@@ -31,7 +31,7 @@ public class OperationController extends HttpServlet {
 			listUsers(request,response);
 			break;
 		case "adduser":
-			addUser(request, response);
+			addUserFormLoader(request, response);
 			break;
 		default:
 			errorPage(request, response);
@@ -41,7 +41,27 @@ public class OperationController extends HttpServlet {
 	}
 
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String operation = request.getParameter("form");
+		operation=operation.toLowerCase();
+		
+		switch(operation) {
+		case "adduseroperation":
+			User newUser=new User(request.getParameter("username"), request.getParameter("email"));
+			addUserOperation(newUser);
+			listUsers(request, response);
+			
+			break;
+			
+		default:
+				errorPage(request, response);
+				break;
+		}
+	}
+
+	private void addUserOperation(User newUser) {
+		new UsersModel().addUser(dataSource, newUser);
+		return;
 		
 	}
 
@@ -52,7 +72,7 @@ public class OperationController extends HttpServlet {
 		request.setAttribute("title", "List of users");
 		request.getRequestDispatcher("listUsers.jsp").forward(request,response);
 	}
-	public void addUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public void addUserFormLoader(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setAttribute("title", "Add User");
 		request.getRequestDispatcher("adduser.jsp").forward(request,response);
 	}
